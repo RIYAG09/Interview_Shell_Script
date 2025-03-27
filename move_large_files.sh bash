@@ -1,0 +1,26 @@
+# Shell Script to Find and Move Large Files (>1GB) to Another Directory
+
+#!/bin/bash
+
+# Set the source and destination directories
+SOURCE_DIR="/path/to/source_directory"  # Change this to the directory you want to search
+DEST_DIR="/path/to/destination_directory"  # Change this to where you want to move the files
+LOG_FILE="/var/log/move_large_files.log"  # Log file to store moved files info
+
+# Check if the source directory exists
+if [[ ! -d "$SOURCE_DIR" ]]; then
+    echo "Source directory $SOURCE_DIR does not exist!"
+    exit 1
+fi
+
+# Check if the destination directory exists, if not create it
+if [[ ! -d "$DEST_DIR" ]]; then
+    echo "Destination directory $DEST_DIR does not exist. Creating it..."
+    mkdir -p "$DEST_DIR"
+fi
+
+# Find files greater than 1GB and move them
+echo "Searching for files larger than 1GB in $SOURCE_DIR..."
+find "$SOURCE_DIR" -type f -size +1G -exec mv {} "$DEST_DIR" \; -exec echo "$(date): Moved {} to $DEST_DIR" >> "$LOG_FILE" \;
+
+echo "File transfer completed. Check $LOG_FILE for details."
